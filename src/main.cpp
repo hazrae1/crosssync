@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
                   << "  --------------------------------------------------------\n"
                   << std::fixed << std::setprecision(4)
                   << "  Source sensitivity   " << *profile.sensitivity << "\n"
-                  << "  Crosshair color      " << crosssync::rgb_hex(profile) << "\n"
+                  << "  Crosshair color      " << (crosssync::rgb_hex(profile).empty() ? "not specified" : crosssync::rgb_hex(profile)) << "\n"
                   << "  Source keybinds      " << profile.bindings.size() << " staged\n"
                   << "  CS-specific options  " << profile.source_only_settings.size() << " preserved\n"
                   << "  CFG commands         " << profile.supported_commands << " read / "

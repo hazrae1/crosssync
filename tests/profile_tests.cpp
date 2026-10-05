@@ -38,11 +38,13 @@ int main() {
         require(*quoted.sensitivity == 1.6, "Multiple commands or comments parsed incorrectly");
         require(quoted.bindings.at("K") == "say https://example.test; \"hi\"", "Quoted content changed");
         require(quoted.ignored_commands == 3, "Unsupported commands were not ignored");
+        require(crosssync::rgb_hex(quoted).empty(), "Absent RGB channels acquired default values");
 
         const auto json = crosssync::profile_json(quoted);
         require(json.find("\"schema\": \"crosssync.profile/v1\"") != std::string::npos, "Wrong schema");
         require(json.find("\"source_sensitivity\": 1.6000") != std::string::npos, "Source sensitivity changed");
         require(json.find("\"workflow\": \"manual_setup\"") != std::string::npos, "Missing workflow");
+        require(json.find("\"color\": null") != std::string::npos, "Absent color was not represented as null");
         require(json.find("\\\"hi\\\"") != std::string::npos, "JSON quotes were not escaped");
         const auto escaped = crosssync::profile_json(parse("sensitivity 1\nbind K \"say\t\\\\test\"\n"));
         require(escaped.find("\\u0009") != std::string::npos, "JSON control character was not escaped");

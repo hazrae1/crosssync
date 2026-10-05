@@ -13,7 +13,7 @@ inline constexpr const char* version = "1.1.0";
 
 struct Profile {
     std::optional<double> sensitivity;
-    std::array<int, 3> crosshair_rgb{50, 255, 160};
+    std::array<std::optional<int>, 3> crosshair_rgb;
     std::map<std::string, double> crosshair_parameters;
     std::map<std::string, double> source_only_settings;
     std::map<std::string, std::string> bindings;

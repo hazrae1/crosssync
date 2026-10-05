@@ -159,8 +159,9 @@ Profile parse_config(std::istream& input) {
 std::string rgb_hex(const Profile& profile) {
     std::ostringstream out;
     out << '#' << std::hex << std::uppercase << std::setfill('0');
-    for (int channel : profile.crosshair_rgb) {
-        out << std::setw(2) << channel;
+    for (const auto& channel : profile.crosshair_rgb) {
+        if (!channel) return {};
+        out << std::setw(2) << *channel;
     }
     return out.str();
 }
@@ -172,13 +173,14 @@ std::string profile_json(const Profile& profile) {
     std::ostringstream out;
     out.imbue(std::locale::classic());
     out << std::fixed << std::setprecision(4);
+    const auto color = rgb_hex(profile);
     out << "{\n  \"schema\": \"crosssync.profile/v1\",\n"
         << "  \"generator\": \"CrossSync " << version << "\",\n"
         << "  \"source\": \"Counter-Strike 2\",\n"
         << "  \"target\": \"VALORANT\",\n"
         << "  \"workflow\": \"manual_setup\",\n"
         << "  \"mouse\": {\n    \"source_sensitivity\": " << *profile.sensitivity << "\n  },\n"
-        << "  \"crosshair\": {\n    \"color\": " << json_string(rgb_hex(profile)) << ",\n"
+        << "  \"crosshair\": {\n    \"color\": " << (color.empty() ? "null" : json_string(color)) << ",\n"
         << "    \"source_parameters\": {";
     std::size_t index = 0;
     for (const auto& [name, value] : profile.crosshair_parameters) {

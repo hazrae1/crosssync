@@ -37,7 +37,7 @@
 }
 ```
 
-La sensibilidad y los parámetros de mira conservan sus valores y unidades de origen. El color se serializa en hexadecimal RGB. `source_only_settings` agrupa las variables del modelo del arma de CS; los binds mantienen su texto original.
+La sensibilidad y los parámetros de mira conservan sus valores y unidades de origen. El color se serializa en hexadecimal RGB cuando están presentes los tres canales; en caso contrario se exporta `null`. `source_only_settings` agrupa las variables del modelo del arma de CS; los binds mantienen su texto original.
 
 `manual_setup` identifica el flujo de aplicación: consultar el perfil y completar los ajustes en los menús del destino. Este JSON pertenece a CrossSync. Para compartir miras dentro de Valorant, el juego utiliza sus [códigos de importación y exportación](https://playvalorant.com/en-us/news/game-updates/valorant-patch-notes-4-05/).
 
