@@ -1,0 +1,67 @@
+name: Build & verify
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: C++17 / ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Compile
+        run: cmake --build build --config Release --parallel
+      - name: Verify parser and CLI
+        run: ctest --test-dir build -C Release --output-on-failure
+      - name: Export example profile
+        shell: bash
+        run: |
+          if [ -f build/Release/crosssync.exe ]; then
+            build/Release/crosssync.exe --input examples/autoexec.cfg --output output/valorant-profile.demo.json --fast --no-color
+          else
+            build/crosssync --input examples/autoexec.cfg --output output/valorant-profile.demo.json --fast --no-color
+          fi
+      - name: Validate exported JSON
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+          report = json.loads(Path('output/valorant-profile.demo.json').read_text())
+          assert report['simulation'] is True
+          assert report['applied_to_game'] is False
+          assert report['mouse']['preview_sensitivity'] == 0.5
+          assert len(report['source_bindings']) == 5
+      - name: Assemble portable package
+        shell: python
+        run: |
+          import shutil
+          from pathlib import Path
+          package = Path('dist')
+          package.mkdir()
+          candidates = [Path('build/Release/crosssync.exe'), Path('build/crosssync')]
+          binary = next(path for path in candidates if path.is_file())
+          shutil.copy2(binary, package / binary.name)
+          for name in ['README.md', 'LICENSE']:
+              shutil.copy2(name, package / name)
+          shutil.copytree('examples', package / 'examples')
+          shutil.copytree('docs', package / 'docs')
+          shutil.copytree('assets', package / 'assets')
+      - name: Upload portable build
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: crosssync-${{ matrix.os }}
+          path: dist/
+          retention-days: 14

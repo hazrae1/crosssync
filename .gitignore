@@ -1,0 +1,15 @@
+/build*/
+/output/
+/dist/
+/.tools/
+/.vs/
+/.idea/
+.DS_Store
+*.exe
+*.obj
+*.o
+*.pdb
+*.ilk
+*.user
+*.cfg
+!examples/autoexec.cfg
