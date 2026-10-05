@@ -13,3 +13,4 @@
 *.user
 *.cfg
 !examples/autoexec.cfg
+!examples/cs-only.cfg

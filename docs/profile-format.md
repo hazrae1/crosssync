@@ -1,38 +1,44 @@
-# Formato del reporte
+# Formato del perfil
 
-El formato `crosssync.demo/v1` pertenece a este simulador. No es un archivo de configuración de Valorant ni un perfil importable por el juego.
+`crosssync.profile/v1` es el esquema de exportación de CrossSync para organizar una transición de configuración.
 
 ```json
 {
-  "schema": "crosssync.demo/v1",
-  "generator": "CrossSync 1.0.0",
-  "simulation": true,
-  "applied_to_game": false,
-  "source": "Counter-Strike CFG",
-  "target": "VALORANT mock profile",
-  "notice": "Joke project. Fictional calibration; not a VALORANT import format.",
+  "schema": "crosssync.profile/v1",
+  "generator": "CrossSync 1.1.0",
+  "source": "Counter-Strike 2",
+  "target": "VALORANT",
+  "workflow": "manual_setup",
   "mouse": {
-    "source_sensitivity": 1.6,
-    "preview_sensitivity": 0.5,
-    "demo_divisor": 3.2
+    "source_sensitivity": 1.6
   },
-  "crosshair_preview": {
+  "crosshair": {
     "color": "#32FFA0",
-    "source_size": 2.5,
-    "source_gap": -2.0,
-    "source_thickness": 0.5
+    "source_parameters": {
+      "cl_crosshair_gap": 4,
+      "cl_crosshair_length": 8,
+      "cl_crosshair_thickness": 2
+    }
+  },
+  "source_only_settings": {
+    "viewmodel_fov": 68,
+    "viewmodel_offset_x": 2.5,
+    "viewmodel_offset_y": 2,
+    "viewmodel_offset_z": -2
   },
   "source_bindings": {
     "MOUSE1": "+attack",
     "SPACE": "+jump"
   },
   "diagnostics": {
-    "supported_commands": 9,
+    "supported_commands": 13,
     "ignored_commands": 0
   }
 }
 ```
 
-`preview_sensitivity` divide la sensibilidad de origen entre `3.2`, una constante ficticia elegida para la presentación. Las medidas de mira y los binds son valores de origen, conservados como metadatos; no se traducen a opciones reales de Valorant.
+La sensibilidad y los parámetros de mira conservan sus valores y unidades de origen. El color se serializa en hexadecimal RGB. `source_only_settings` agrupa las variables del modelo del arma de CS; los binds mantienen su texto original.
 
-La salida omite la ruta de entrada y cualquier contenido ajeno al perfil reconocido. Si decides usar un CFG personal, el reporte puede contener tus binds. Los reportes y CFG personales se excluyen del repositorio por defecto.
+`manual_setup` identifica el flujo de aplicación: consultar el perfil y completar los ajustes en los menús del destino. Este JSON pertenece a CrossSync. Para compartir miras dentro de Valorant, el juego utiliza sus [códigos de importación y exportación](https://playvalorant.com/en-us/news/game-updates/valorant-patch-notes-4-05/).
+
+La salida omite la ruta de entrada y cualquier contenido ajeno al perfil reconocido. Los CFG personales y los perfiles exportados se excluyen del repositorio por defecto.

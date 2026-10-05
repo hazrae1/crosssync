@@ -112,12 +112,18 @@ Profile parse_config(std::istream& input) {
                         throw std::runtime_error("Sensitivity must be greater than zero");
                     }
                     profile.sensitivity = value;
-                } else if (name == "cl_crosshairsize") {
-                    profile.crosshair_size = number(tokens, 0.0, 20.0);
-                } else if (name == "cl_crosshairgap") {
-                    profile.crosshair_gap = number(tokens, -20.0, 20.0);
-                } else if (name == "cl_crosshairthickness") {
-                    profile.crosshair_thickness = number(tokens, 0.0, 10.0);
+                } else if (name == "cl_crosshair_length" || name == "cl_crosshairsize") {
+                    profile.crosshair_parameters[name] = number(tokens, 0.0, 255.0);
+                } else if (name == "cl_crosshair_gap" || name == "cl_crosshairgap") {
+                    profile.crosshair_parameters[name] = number(tokens, -3840.0, 3840.0);
+                } else if (name == "cl_crosshair_thickness" || name == "cl_crosshairthickness") {
+                    profile.crosshair_parameters[name] = number(tokens, 0.0, 32.0);
+                } else if (name == "viewmodel_fov") {
+                    profile.source_only_settings[name] = number(tokens, 60.0, 68.0);
+                } else if (name == "viewmodel_offset_x") {
+                    profile.source_only_settings[name] = number(tokens, -2.0, 2.5);
+                } else if (name == "viewmodel_offset_y" || name == "viewmodel_offset_z") {
+                    profile.source_only_settings[name] = number(tokens, -2.0, 2.0);
                 } else if (name == "cl_crosshaircolor_r" || name == "cl_crosshaircolor_g" ||
                            name == "cl_crosshaircolor_b") {
                     const double value = number(tokens, 0.0, 255.0);
@@ -159,29 +165,34 @@ std::string rgb_hex(const Profile& profile) {
     return out.str();
 }
 
-std::string demo_json(const Profile& profile) {
+std::string profile_json(const Profile& profile) {
     if (!profile.sensitivity) {
         throw std::runtime_error("Profile is missing sensitivity");
     }
     std::ostringstream out;
     out.imbue(std::locale::classic());
     out << std::fixed << std::setprecision(4);
-    out << "{\n  \"schema\": \"crosssync.demo/v1\",\n"
+    out << "{\n  \"schema\": \"crosssync.profile/v1\",\n"
         << "  \"generator\": \"CrossSync " << version << "\",\n"
-        << "  \"simulation\": true,\n"
-        << "  \"applied_to_game\": false,\n"
-        << "  \"source\": \"Counter-Strike CFG\",\n"
-        << "  \"target\": \"VALORANT mock profile\",\n"
-        << "  \"notice\": \"Joke project. Fictional calibration; not a VALORANT import format.\",\n"
-        << "  \"mouse\": {\n    \"source_sensitivity\": " << *profile.sensitivity << ",\n"
-        << "    \"preview_sensitivity\": " << *profile.sensitivity / demo_sensitivity_divisor << ",\n"
-        << "    \"demo_divisor\": " << demo_sensitivity_divisor << "\n  },\n"
-        << "  \"crosshair_preview\": {\n    \"color\": " << json_string(rgb_hex(profile)) << ",\n"
-        << "    \"source_size\": " << profile.crosshair_size << ",\n"
-        << "    \"source_gap\": " << profile.crosshair_gap << ",\n"
-        << "    \"source_thickness\": " << profile.crosshair_thickness << "\n  },\n"
-        << "  \"source_bindings\": {";
+        << "  \"source\": \"Counter-Strike 2\",\n"
+        << "  \"target\": \"VALORANT\",\n"
+        << "  \"workflow\": \"manual_setup\",\n"
+        << "  \"mouse\": {\n    \"source_sensitivity\": " << *profile.sensitivity << "\n  },\n"
+        << "  \"crosshair\": {\n    \"color\": " << json_string(rgb_hex(profile)) << ",\n"
+        << "    \"source_parameters\": {";
     std::size_t index = 0;
+    for (const auto& [name, value] : profile.crosshair_parameters) {
+        out << (index++ == 0 ? "\n" : ",\n") << "      " << json_string(name) << ": " << value;
+    }
+    out << (profile.crosshair_parameters.empty() ? "" : "\n    ") << "}\n  },\n"
+        << "  \"source_only_settings\": {";
+    index = 0;
+    for (const auto& [name, value] : profile.source_only_settings) {
+        out << (index++ == 0 ? "\n" : ",\n") << "    " << json_string(name) << ": " << value;
+    }
+    out << (profile.source_only_settings.empty() ? "" : "\n  ") << "},\n"
+        << "  \"source_bindings\": {";
+    index = 0;
     for (const auto& [key, command] : profile.bindings) {
         out << (index++ == 0 ? "\n" : ",\n") << "    " << json_string(key) << ": " << json_string(command);
     }
@@ -193,8 +204,9 @@ std::string demo_json(const Profile& profile) {
 
 std::string builtin_config() {
     return "sensitivity 1.6\ncl_crosshaircolor_r 50\ncl_crosshaircolor_g 255\n"
-           "cl_crosshaircolor_b 160\ncl_crosshairsize 2.5\ncl_crosshairgap -2\n"
-           "cl_crosshairthickness 0.5\nbind MOUSE1 +attack\nbind SPACE +jump\n";
+           "cl_crosshaircolor_b 160\ncl_crosshair_length 8\ncl_crosshair_gap 4\n"
+           "cl_crosshair_thickness 2\nviewmodel_fov 68\nviewmodel_offset_x 2.5\n"
+           "viewmodel_offset_y 2\nviewmodel_offset_z -2\nbind MOUSE1 +attack\nbind SPACE +jump\n";
 }
 
 } // namespace crosssync

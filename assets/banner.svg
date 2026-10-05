@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="title desc">
   <title id="title">CrossSync — CS2 to VALORANT configuration bridge</title>
-  <desc id="desc">Dark technical banner with a crosshair logo and a source to destination pipeline. Offline demo.</desc>
+  <desc id="desc">Configuration import and export pipeline with source-specific CS2 settings.</desc>
   <defs>
     <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
       <path d="M32 0H0V32" fill="none" stroke="#26313a" stroke-width=".6" opacity=".5"/>
@@ -12,16 +12,16 @@
   <rect x="1" y="1" width="1278" height="418" rx="17" fill="url(#grid)" stroke="#283440"/>
   <ellipse cx="1090" cy="80" rx="300" ry="260" fill="url(#glow)"/>
   <rect x="40" y="36" width="4" height="23" fill="#ff5265"/>
-  <text x="58" y="53" fill="#a3b0bd" font-family="Consolas, monospace" font-size="13" letter-spacing="2.5">CONFIGURATION BRIDGE / v1.0.0</text>
+  <text x="58" y="53" fill="#a3b0bd" font-family="Consolas, monospace" font-size="13" letter-spacing="2.5">CONFIGURATION BRIDGE / v1.1.0</text>
   <circle cx="1090" cy="46" r="4" fill="#48eab5"/>
-  <text x="1102" y="51" fill="#48eab5" font-family="Consolas, monospace" font-size="12" letter-spacing="1.3">OFFLINE DEMO</text>
+  <text x="1102" y="51" fill="#48eab5" font-family="Consolas, monospace" font-size="12" letter-spacing="1.3">LOCAL EXPORT</text>
   <g transform="translate(78 147)">
     <circle r="27" fill="none" stroke="#ff5265" stroke-width="3"/>
     <path d="M-39 0H-16M16 0H39M0-39V-16M0 16V39" stroke="#ff5265" stroke-width="4"/>
     <circle r="4" fill="#48eab5"/>
   </g>
   <text x="132" y="168" fill="#f5f7fa" font-family="Segoe UI, Arial, sans-serif" font-size="68" font-weight="700" letter-spacing="-2">CrossSync</text>
-  <text x="42" y="214" fill="#a3b0bd" font-family="Segoe UI, Arial, sans-serif" font-size="19">Tus configs cambian de juego. Tu aim se queda contigo.</text>
+  <text x="42" y="214" fill="#a3b0bd" font-family="Segoe UI, Arial, sans-serif" font-size="19">Tu configuración, lista para el siguiente juego.</text>
   <g transform="translate(42 258)">
     <rect width="246" height="102" rx="9" fill="#121e27" stroke="#32414e"/>
     <text x="18" y="27" fill="#7b8f9f" font-family="Consolas, monospace" font-size="11" letter-spacing="2">SOURCE / .CFG</text>
@@ -40,9 +40,9 @@
   <path d="M675 303L683 309L675 315" fill="none" stroke="#ff5265" stroke-width="2"/>
   <g transform="translate(704 258)">
     <rect width="246" height="102" rx="9" fill="#21171f" stroke="#5b303c"/>
-    <text x="18" y="27" fill="#b58491" font-family="Consolas, monospace" font-size="11" letter-spacing="2">TARGET / MOCK PROFILE</text>
+    <text x="18" y="27" fill="#b58491" font-family="Consolas, monospace" font-size="11" letter-spacing="2">TARGET / PROFILE JSON</text>
     <text x="18" y="58" fill="#f5f7fa" font-family="Segoe UI, Arial, sans-serif" font-size="23" font-weight="600">VALORANT</text>
-    <text x="18" y="83" fill="#ff7c8b" font-family="Consolas, monospace" font-size="12">preview 0.5000 / demo</text>
+    <text x="18" y="83" fill="#ff7c8b" font-family="Consolas, monospace" font-size="12">input / crosshair / bindings</text>
   </g>
   <g transform="translate(1103 273)" opacity=".75">
     <circle r="53" fill="none" stroke="#35434e" stroke-width="1"/>
@@ -52,6 +52,6 @@
     <circle r="3" fill="#48eab5"/>
   </g>
   <path d="M42 384H1238" stroke="url(#fade)" opacity=".5"/>
-  <text x="42" y="404" fill="#728594" font-family="Consolas, monospace" font-size="10" letter-spacing="1.5">LOCAL EXECUTION  /  ZERO DEPENDENCIES  /  MOCK EXPORT</text>
+  <text x="42" y="404" fill="#728594" font-family="Consolas, monospace" font-size="10" letter-spacing="1.5">LOCAL EXECUTION  /  ZERO DEPENDENCIES  /  CFG IMPORT</text>
   <text x="1020" y="404" fill="#728594" font-family="Consolas, monospace" font-size="10" letter-spacing="1.5">BUILT BY HAZRAE1</text>
 </svg>

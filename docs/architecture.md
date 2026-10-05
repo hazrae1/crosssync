@@ -12,10 +12,10 @@ CFG de ejemplo o archivo indicado
         Profile de origen
               |
               v
-     vista previa de demo
+    inventario de ajustes
               |
               v
-      *.demo.json / consola
+       *.json / consola
 ```
 
 ## Responsabilidades
@@ -27,12 +27,12 @@ CFG de ejemplo o archivo indicado
 | `src/main.cpp` | Argumentos, presentación, lectura del archivo indicado y escritura del reporte. |
 | `tests/profile_tests.cpp` | Casos de parser, valores inválidos, comentarios, comillas y JSON. |
 
-El parser acepta valores entre comillas, comentarios `//` fuera de comillas y comandos separados por `;`. Las entradas repetidas usan el último valor. Solo interpreta sensibilidad, tres medidas de mira y tres canales RGB, además de `bind`. Los comandos desconocidos cuentan como ignorados y se conservan únicamente los binds como metadatos de texto.
+El parser acepta valores entre comillas, comentarios `//` fuera de comillas y comandos separados por `;`. Las entradas repetidas usan el último valor. Interpreta sensibilidad, tres medidas de mira y tres canales RGB, además de `bind` y cuatro variables `viewmodel_*`. Conserva el nombre original de cada parámetro de mira, tanto con la sintaxis actual como con la anterior.
 
-La entrada está limitada a 1 MiB y requiere sensibilidad positiva. Los canales RGB deben ser enteros entre 0 y 255. Las medidas restantes se validan dentro de los rangos definidos para esta demo.
+La entrada está limitada a 1 MiB y requiere sensibilidad positiva. Los canales RGB deben ser enteros entre 0 y 255. Los parámetros actuales de mira y modelo del arma se validan con los rangos de la [referencia de comandos](compatibility.md). Los comandos desconocidos cuentan como ignorados.
 
 ## Presentación
 
-Las seis etapas de consola ilustran una migración ficticia. `--fast` omite sus pausas; no altera el contenido del reporte. `--dry-run` realiza la lectura y la vista previa sin crear una salida. Los colores se habilitan únicamente en una terminal compatible.
+Las seis etapas muestran el avance del flujo de importación y exportación. `--fast` omite las pausas de presentación; conserva el mismo perfil. `--dry-run` realiza la lectura y la vista previa sin crear una salida. Los colores se habilitan únicamente en una terminal compatible.
 
-El programa escribe solo reportes cuyo nombre termina en `.demo.json`. No tiene integración con procesos, cuentas, instaladores ni archivos internos de juegos.
+El programa escribe perfiles cuyo nombre termina en `.json` y rechaza que la entrada y salida sean el mismo archivo. El flujo de configuración del destino se realiza desde sus menús, usando el perfil exportado como referencia.

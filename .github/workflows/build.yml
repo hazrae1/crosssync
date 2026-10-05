@@ -30,20 +30,23 @@ jobs:
         shell: bash
         run: |
           if [ -f build/Release/crosssync.exe ]; then
-            build/Release/crosssync.exe --input examples/autoexec.cfg --output output/valorant-profile.demo.json --fast --no-color
+            build/Release/crosssync.exe --input examples/autoexec.cfg --output output/valorant-profile.json --fast --no-color
           else
-            build/crosssync --input examples/autoexec.cfg --output output/valorant-profile.demo.json --fast --no-color
+            build/crosssync --input examples/autoexec.cfg --output output/valorant-profile.json --fast --no-color
           fi
       - name: Validate exported JSON
         shell: python
         run: |
           import json
           from pathlib import Path
-          report = json.loads(Path('output/valorant-profile.demo.json').read_text())
-          assert report['simulation'] is True
-          assert report['applied_to_game'] is False
-          assert report['mouse']['preview_sensitivity'] == 0.5
-          assert len(report['source_bindings']) == 5
+          report = json.loads(Path('output/valorant-profile.json').read_text())
+          assert report['schema'] == 'crosssync.profile/v1'
+          assert report['workflow'] == 'manual_setup'
+          assert report['mouse']['source_sensitivity'] == 1.6
+          assert report['crosshair']['source_parameters']['cl_crosshair_length'] == 8
+          assert report['source_only_settings']['viewmodel_offset_x'] == 2.5
+          assert len(report['source_only_settings']) == 4
+          assert len(report['source_bindings']) == 7
       - name: Assemble portable package
         shell: python
         run: |

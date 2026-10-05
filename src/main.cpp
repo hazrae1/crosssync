@@ -23,7 +23,7 @@ namespace {
 
 struct Options {
     std::filesystem::path input;
-    std::filesystem::path output = "output/valorant-profile.demo.json";
+    std::filesystem::path output = "output/valorant-profile.json";
     bool dry_run = false;
     bool fast = false;
     bool color = true;
@@ -43,10 +43,10 @@ bool terminal_colors() {
 
 void help() {
     std::cout << "CrossSync " << crosssync::version << " | CS2 -> VALORANT configuration bridge\n"
-              << "Offline joke simulator. Generates a mock report; game settings are not applied.\n\n"
+              << "Local CFG import and configuration profile export.\n\n"
               << "Usage: crosssync [options]\n\n"
               << "  --input <file.cfg>        Read a CFG (built-in sample by default)\n"
-              << "  --output <file.demo.json> Save the mock profile (default: output/valorant-profile.demo.json)\n"
+              << "  --output <file.json>      Save profile (default: output/valorant-profile.json)\n"
               << "  --dry-run                 Preview without creating a file\n"
               << "  --fast                    Skip presentation delays\n"
               << "  --no-color                Plain terminal output\n"
@@ -72,9 +72,9 @@ Options options(int argc, char** argv) {
         else throw std::runtime_error("Unknown option: " + arg + " (use --help)");
     }
     const auto filename = result.output.filename().string();
-    constexpr const char* suffix = ".demo.json";
-    if (filename.size() < 10 || filename.compare(filename.size() - 10, 10, suffix) != 0) {
-        throw std::runtime_error("Output must end in .demo.json");
+    constexpr const char* suffix = ".json";
+    if (filename.size() < 5 || filename.compare(filename.size() - 5, 5, suffix) != 0) {
+        throw std::runtime_error("Output must end in .json");
     }
     if (!result.input.empty() && std::filesystem::exists(result.output) &&
         std::filesystem::equivalent(result.input, result.output)) {
@@ -118,7 +118,7 @@ int main(int argc, char** argv) {
                   << "   |  CS2  ->  VALORANT          CONFIGURATION BRIDGE     |\n"
                   << "   +------------------------------------------------------+\n"
                   << (opts.color ? "\033[0m" : "")
-                  << "\n  SESSION   LOCAL / OFFLINE DEMO\n"
+                  << "\n  SESSION   LOCAL / CONFIGURATION EXPORT\n"
                   << "  SOURCE    " << (opts.input.empty() ? "built-in sample" : opts.input.string()) << "\n"
                   << "  TARGET    " << (opts.dry_run ? "preview only" : opts.output.string()) << "\n\n";
         stage(opts, 10, "Initialize migration workspace");
@@ -138,24 +138,22 @@ int main(int argc, char** argv) {
             profile = crosssync::parse_config(input);
         }
         stage(opts, 30, "Parse source configuration");
-        stage(opts, 55, "Calibrate sensitivity preview");
-        stage(opts, 75, "Stage crosshair and keybind metadata");
-        const auto report = crosssync::demo_json(profile);
-        stage(opts, 90, "Validate mock profile schema");
+        stage(opts, 55, "Collect input and crosshair parameters");
+        stage(opts, 75, "Index source-specific settings and keybinds");
+        const auto report = crosssync::profile_json(profile);
+        stage(opts, 90, "Serialize configuration profile");
         if (!opts.dry_run) write_report(opts.output, report);
-        stage(opts, 100, opts.dry_run ? "Preview ready" : "Mock profile exported");
+        stage(opts, 100, opts.dry_run ? "Preview ready" : "Configuration profile exported");
         std::cout << "\n  MIGRATION PREVIEW\n"
                   << "  --------------------------------------------------------\n"
                   << std::fixed << std::setprecision(4)
-                  << "  Mouse sensitivity    " << *profile.sensitivity << " -> "
-                  << *profile.sensitivity / crosssync::demo_sensitivity_divisor << " (demo)\n"
+                  << "  Source sensitivity   " << *profile.sensitivity << "\n"
                   << "  Crosshair color      " << crosssync::rgb_hex(profile) << "\n"
                   << "  Source keybinds      " << profile.bindings.size() << " staged\n"
+                  << "  CS-specific options  " << profile.source_only_settings.size() << " preserved\n"
                   << "  CFG commands         " << profile.supported_commands << " read / "
                   << profile.ignored_commands << " ignored\n\n"
-                  << "  Demo session complete.\n"
-                  << "  Tus configs ya cruzaron. Tu aim sigue siendo tu responsabilidad.\n"
-                  << "  Joke simulator: fictional values; no game settings were applied.\n\n";
+                  << "  Configuration session complete.\n\n";
         return 0;
     } catch (const std::exception& error) {
         std::cerr << "CrossSync error: " << error.what() << '\n';
